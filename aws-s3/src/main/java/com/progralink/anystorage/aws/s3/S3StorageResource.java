@@ -73,6 +73,16 @@ public class S3StorageResource extends AbstractStorageResource {
                 .cacheControl(CACHE_CONTROL_NO_CACHE)
                 .expires(Instant.now());
 
+        String storageClass = options.getString(S3WriteOption.Name.S3_STORAGE_CLASS);
+        if (storageClass.isEmpty()) {
+            if (getSession().getDefaultStorageClass() != null) {
+                storageClass = getSession().getDefaultStorageClass().toString();
+            }
+            if (!storageClass.isEmpty()) {
+                requestBuilder.storageClass(storageClass);
+            }
+        }
+
         byte[] checksum = options.get(WriteOption.Name.CHECKSUM_SHA256);
         if (checksum != null) {
             requestBuilder.checksumSHA256(
@@ -198,38 +208,35 @@ public class S3StorageResource extends AbstractStorageResource {
     }
 
     @Override
-    public List<String> childrenNames() throws IOException {
-        List<String> names = new LinkedList<>();
+    public Collection<String> childrenNames() throws IOException {
+        final String prefix;
+        if (!path.endsWith("/")) {
+            prefix = path + "/";
+        } else {
+            prefix = path;
+        }
+
+        Set<String> names = new LinkedHashSet<>();
         ListObjectsV2Request request = ListObjectsV2Request.builder()
-                .bucket(getSession().getBucket())
-                .prefix(path + "/")
-                .delimiter("/")
-                .build();
+            .bucket(getSession().getBucket())
+            .prefix(prefix)
+            //.delimiter("/")   //TODO: now it is inefficient (when there are subdirectories), but with delimiter it skips (virtual) directories
+            .build();
 
-        int step = 1;
-        do {
-            ListObjectsV2Iterable response = getSession().getClient().listObjectsV2Paginator(request);
-            for (ListObjectsV2Response page : response) {
-                page.contents().forEach((S3Object object) -> {
-                    String key = object.key();
-                    String name;
-                    int i = key.indexOf('/', path.length() + 1);
-                    if (i != -1) {
-                        name = key.substring(path.length() + 1, i);
-                    } else {
-                        name = key.substring(path.length() + 1);
-                    }
-                    names.add(name);
-                });
-            }
-
-            if (names.isEmpty() && step == 1) {
-                request = request.toBuilder().delimiter(null).build();
-                step++;
-            } else {
-                break;
-            }
-        } while (step < 3);
+        ListObjectsV2Iterable response = getSession().getClient().listObjectsV2Paginator(request);
+        for (ListObjectsV2Response page : response) {
+            page.contents().forEach((S3Object object) -> {
+                String key = object.key();
+                String name;
+                int i = key.indexOf('/', prefix.length());
+                if (i != -1) {
+                    name = key.substring(prefix.length(), i);
+                } else {
+                    name = key.substring(prefix.length());
+                }
+                names.add(name);
+            });
+        }
 
         return names;
     }

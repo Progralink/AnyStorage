@@ -8,6 +8,7 @@ import com.progralink.anystorage.api.options.Options;
 import com.progralink.anystorage.api.options.WriteOption;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.StorageClass;
 
 import java.io.IOException;
 
@@ -15,6 +16,9 @@ public class S3StorageSession extends AbstractStorageSession {
     private S3Client client;
     private String bucket;
     private String rootPath;
+
+    private StorageClass defaultStorageClass;
+
 
     S3StorageSession(String name, S3Client client, String bucket, String rootPath, Options options) {
         super(name, options);
@@ -51,7 +55,15 @@ public class S3StorageSession extends AbstractStorageSession {
 
     @Override
     public boolean isSupported(Option<?> option) {
-        return option == WriteOption.ATOMIC || option == WriteOption.APPEND || option == WriteOption.CREATE_NEW || option == DeleteOption.REMOVE_HISTORY;
+        return option == WriteOption.ATOMIC || option == WriteOption.APPEND || option == WriteOption.CREATE_NEW || option == DeleteOption.REMOVE_HISTORY || option instanceof S3WriteOption;
+    }
+
+    public StorageClass getDefaultStorageClass() {
+        return defaultStorageClass;
+    }
+
+    public void setDefaultStorageClass(StorageClass defaultStorageClass) {
+        this.defaultStorageClass = defaultStorageClass;
     }
 
     protected IOException translateException(Exception e) {
