@@ -20,17 +20,17 @@
     <url>https://github.com/Progralink/AnyStorage</url>
     <scm>
         <connection>scm:git:git://github.com/Progralink/AnyStorage.git</connection>
-        <developerConnection>scm:git:ssh://github.com:Progralink/AnyStorage.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Progralink/AnyStorage.git</developerConnection>
         <url>https://github.com/Progralink/AnyStorage</url>
     </scm>
 
     <modules>
         <module>api</module>
         <module>testsuite</module>
-        <module>aws-s3</module>
-        <module>filesystem</module>
         <module>memory</module>
+        <module>filesystem</module>
         <module>smb</module>
+        <module>aws-s3</module>
         <module>sql</module>
         <module>all</module>
     </modules>

@@ -3,14 +3,15 @@ package com.progralink.anystorage.filesystem;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 public class FileBasedLock implements AutoCloseable {
     private final Path lockFilePath;

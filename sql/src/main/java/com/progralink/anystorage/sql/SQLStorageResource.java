@@ -1,6 +1,7 @@
 package com.progralink.anystorage.sql;
 
-import com.progralink.anystorage.api.*;
+import com.progralink.anystorage.api.AbstractStorageResource;
+import com.progralink.anystorage.api.StorageResource;
 import com.progralink.anystorage.api.exceptions.AlreadyExistsException;
 import com.progralink.anystorage.api.exceptions.NotEmptyDirectoryException;
 import com.progralink.anystorage.api.exceptions.NotFoundException;
@@ -20,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import static com.progralink.anystorage.sql.SQLStorageSession.*;
 

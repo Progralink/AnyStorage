@@ -69,7 +69,20 @@ public interface StorageResource extends Iterable<StorageResource> {
         }
     }
 
+    default long readTo(File targetFile, ReadOption<?>... options) throws IOException {
+        return readTo(targetFile.toPath());
+    }
+
+    default long readTo(Path targetFilePath, ReadOption<?>... options) throws IOException {
+        try (OutputStream outputStream = Files.newOutputStream(targetFilePath)) {
+            try (InputStream inputStream = openRead(options)) {
+                return IOStreams.transfer(inputStream, outputStream);
+            }
+        }
+    }
+
     InputStream openRead(ReadOption<?>... options) throws IOException;
+
     OutputStream openWrite(WriteOption<?>... options) throws IOException;
 
     long write(InputStream source, WriteOption<?>... options) throws IOException;
@@ -82,15 +95,16 @@ public interface StorageResource extends Iterable<StorageResource> {
         write(new LengthAwareInputStream(new ByteArrayInputStream(data, offset, length), length), options);
     }
 
-    default void write(Path filePath, WriteOption<?>... options) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(filePath)) {
-            long size = Files.size(filePath);
+    default long write(Path sourceFilePath, WriteOption<?>... options) throws IOException {
+        try (InputStream inputStream = Files.newInputStream(sourceFilePath)) {
+            long size = Files.size(sourceFilePath);
             write(new LengthAwareInputStream(inputStream, size), options);
+            return size;
         }
     }
 
-    default void write(File file, WriteOption<?>... options) throws IOException {
-        write(file.toPath(), options);
+    default long write(File file, WriteOption<?>... options) throws IOException {
+        return write(file.toPath(), options);
     }
 
 

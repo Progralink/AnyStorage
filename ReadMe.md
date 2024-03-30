@@ -14,16 +14,17 @@ Instead of `anystorage-all` you can pick one specific connector from the list be
 
 
 ### Supported Storages
-- `anystorage-filesystem`: local filesystem *(whatever Java 8+ supports on host OS)*
 - `anystorage-memory`: Java Heap memory
+- `anystorage-filesystem`: local filesystem *(whatever Java 8+ supports on host OS)*
 - `anystorage-smb`: SMB/CIFS (NAS), uses `org.codelibs:jcifs`
 - `anystorage-aws-s3`: AWS S3 (or compatible), uses `software.amazon.awssdk:s3`
 - `anystorage-sql`: SQL database *(mimics filesystem in a table)*
 
 
 ## Dependencies
-- for SMB/CIFS: **jcifs**: https://github.com/codelibs/jcifs (licence: LGPL) + its dependencies 
-- for AWS S3: **AWS Java SDK: S3** https://aws.amazon.com/sdk-for-java/ (license: Apache 2.0) + its dependencies 
+- for all: **JInOut** | https://github.com/Progralink/JInOut (licence: LGPL)
+- for SMB/CIFS: **jcifs** | https://github.com/codelibs/jcifs (licence: LGPL) + its dependencies 
+- for AWS S3: **AWS Java SDK: S3** | https://aws.amazon.com/sdk-for-java/ (license: Apache 2.0) + its dependencies 
 
 ## Examples
 
@@ -83,7 +84,20 @@ This library tries to prevent getting out of the context (chosen "root" director
 ## Storage Types notes
 
 ### AWS S3
+
+#### Immutable files / versioning
 AWS S3 requires the bucket to be versioned for proper overwrite prevention support.
+
+#### Storage Class
+S3 Storage Class can be provided as a dedicated write option:   
+```
+S3WriteOption.ofStorageClass(StorageClass.GLACIER_IR)
+```
+or as a default S3 Storage Class associated to the session:
+```
+((S3StorageSession) session).setDefaultStorageClass(StorageClass.GLACIER_IR)
+```
+
 
 ### SQL
 Creates table `storage` to keep filesystem structure and data in SQL BLOBs. Requires JDBC driver of chosen type to be present in the Classpath. Tested only with H2 https://h2database.com
@@ -108,3 +122,7 @@ If you need another licensing type, please contact us: https://www.progralink.co
 There are other fantastic libraries that are similar, but may not handle some specific cases (like overwrite prevention) or focusing on different storage types:
 - Apache VFS: https://commons.apache.org/proper/commons-vfs/
 - Apache JClouds BlobStore https://jclouds.apache.org/
+
+
+## Need More?
+If you need support or another licensing type, please contact us: https://www.progralink.com/contact/

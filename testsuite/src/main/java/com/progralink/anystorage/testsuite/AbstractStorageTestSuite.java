@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,6 +108,8 @@ public abstract class AbstractStorageTestSuite {
         session.getResource("/authdb/users/john/name.txt").write("John Doe".getBytes(UTF_8));
         session.getResource("/authdb/users/tom/name.txt").write("Tom Doe".getBytes(UTF_8));
 
+        assertTrue(session.getRootResource().childrenNames().contains("authdb"));
+
         assertEquals(1, session.getResource("/authdb/users/john").childrenNames().size());
         assertEquals("name.txt", session.getResource("/authdb/users/john").childrenNames().iterator().next());
         assertEquals(1, session.getResource("/authdb/users/tom").childrenNames().size());
@@ -132,7 +133,7 @@ public abstract class AbstractStorageTestSuite {
     @Test
     @DisabledIf("isTestSkipped")
     void testWriteOnceReadManyPreventOverwriteInMultipleThreads() throws IOException, InterruptedException {
-        String resourcePath = "/target3";
+        String resourcePath = "/mt-target";
         session.getResource(resourcePath).delete(DeleteOption.REMOVE_HISTORY);
 
         AtomicReference<String> winnerContent = new AtomicReference<>();
@@ -155,6 +156,8 @@ public abstract class AbstractStorageTestSuite {
             assertNotNull(winnerContent.get());
             assertEquals(storedContent, winnerContent.get());
         }
+
+        assertTrue(session.getResource(resourcePath).delete(DeleteOption.REMOVE_HISTORY));
     }
 
     private Thread createThreadForImmutableTest(String resourcePath, int threadNumber, AtomicReference<String> winnerContent) {

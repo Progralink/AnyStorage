@@ -1,13 +1,13 @@
 package com.progralink.anystorage.api.multistorage;
 
-import com.progralink.anystorage.api.options.DeleteOption;
-import com.progralink.jinout.streams.IOStreams;
-import com.progralink.jinout.streams.input.LengthAwareInputStream;
 import com.progralink.anystorage.api.StorageResource;
 import com.progralink.anystorage.api.StorageSession;
 import com.progralink.anystorage.api.exceptions.NotFoundException;
+import com.progralink.anystorage.api.options.DeleteOption;
 import com.progralink.anystorage.api.options.ReadOption;
 import com.progralink.anystorage.api.options.WriteOption;
+import com.progralink.jinout.streams.IOStreams;
+import com.progralink.jinout.streams.input.LengthAwareInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;

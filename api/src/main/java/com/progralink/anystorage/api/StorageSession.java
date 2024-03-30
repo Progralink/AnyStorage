@@ -1,12 +1,10 @@
 package com.progralink.anystorage.api;
 
-import com.progralink.anystorage.api.exceptions.NotFoundException;
 import com.progralink.anystorage.api.options.Option;
 import com.progralink.anystorage.api.options.Options;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 public interface StorageSession extends Closeable {
     String getName();
